@@ -56,11 +56,12 @@ const oneDay = sampleData.filter(
   timestamp: Number(obj.timestamp.toFormat('HH')),
 }));
 
-function mergeWithTime(objects: MyObject[], start: number, end: number): MyObject[] {
+function mergeWithTime(objects: MyObject[], start: number, end: number, currentTime: number): MyObject[] {
+  const sortedObjects = objects.sort((a, b) => a.timestamp - b.timestamp);
   const result: MyObject[] = [];
-  //const start = objects[0].timestamp
-  for (let timestamp = start; timestamp <= end; timestamp++) {
-    const matchingObjects = objects.filter(obj => obj.timestamp === timestamp);
+
+  for (let timestamp = end; timestamp >= start; timestamp--) {
+    const matchingObjects = sortedObjects.filter(obj => obj.timestamp === timestamp);
     if (matchingObjects.length > 0) {
       const totalQ1 = matchingObjects.reduce((acc, obj) => acc + obj.q1, 0);
       result.push({ 
@@ -84,11 +85,16 @@ function mergeWithTime(objects: MyObject[], start: number, end: number): MyObjec
       });
     }
   }
+  const currentIndex = result.findIndex(obj => obj.timestamp === currentTime);
+  if (currentIndex !== -1) {
+    result.unshift(...result.splice(currentIndex, result.length - currentIndex));
+  }
+
   return result;
 }
-const oneDay2 = mergeWithTime(oneDay, 0, 23);
-const oneMonth2 = mergeWithTime(oneMonth, 1, 31);
-const oneYear2 = mergeWithTime(oneYear, 1, 12);
+const oneDay2 = mergeWithTime(oneDay, 1, 23, now.hour-1);
+const oneMonth2 = mergeWithTime(oneMonth, 1, 31, now.day-1);
+const oneYear2 = mergeWithTime(oneYear, 1, 12, now.month-1);
 
 //console.log('現在', now.toFormat('y/MM/dd HH:mm:ss'))
 //console.log('一日前', lastDay.toFormat('y/MM/dd HH:mm:ss'))
