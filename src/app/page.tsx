@@ -60,7 +60,7 @@ function mergeWithTime(objects: MyObject[], start: number, end: number, currentT
   const sortedObjects = objects.sort((a, b) => a.timestamp - b.timestamp);
   const result: MyObject[] = [];
 
-  for (let timestamp = end; timestamp >= start; timestamp--) {
+  for (let timestamp = start; timestamp <= end; timestamp++) {
     const matchingObjects = sortedObjects.filter(obj => obj.timestamp === timestamp);
     if (matchingObjects.length > 0) {
       const totalQ1 = matchingObjects.reduce((acc, obj) => acc + obj.q1, 0);
@@ -92,9 +92,9 @@ function mergeWithTime(objects: MyObject[], start: number, end: number, currentT
 
   return result;
 }
-const oneDay2 = mergeWithTime(oneDay, 1, 23, now.hour-1);
-const oneMonth2 = mergeWithTime(oneMonth, 1, 31, now.day-1);
-const oneYear2 = mergeWithTime(oneYear, 1, 12, now.month-1);
+const oneDay2 = mergeWithTime(oneDay, 0, 23, now.hour);
+const oneMonth2 = mergeWithTime(oneMonth, 1, 31, now.day);
+const oneYear2 = mergeWithTime(oneYear, 1, 12, now.month);
 
 //console.log('現在', now.toFormat('y/MM/dd HH:mm:ss'))
 //console.log('一日前', lastDay.toFormat('y/MM/dd HH:mm:ss'))
